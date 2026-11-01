@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>CloudVault File Upload</title>
+</head>
+<body>
+    <h1>CloudVault File Upload</h1>
+    <p>Upload your files to Amazon S3</p>
+
+    <form action="/upload" method="POST" enctype="multipart/form-data">
+        <input type="file" name="file" required>
+        <br><br>
+        <button type="submit">Upload File</button>
+    </form>
+
+    <hr>
+
+    <h3>Server Information</h3>
+    <p>Hostname: {{ hostname }}</p>
+    <p>Server Status: Running</p>
+</body>
+</html>
