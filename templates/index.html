@@ -1,45 +1,255 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>CloudVault</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CloudVault</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #2b2350;
+    --ink-soft: #6b6590;
+    --peach: #ffe3d3;
+    --lilac: #e4dbff;
+    --sky: #d3eeff;
+    --coral: #ff7aa8;
+    --violet: #8b6cff;
+    --mint: #1f9d76;
+    --mint-bg: #d9f6ea;
+    --rose-bg: #ffe0e6;
+    --rose: #c2284f;
+    --card: rgba(255, 255, 255, 0.78);
+    --font-head: "Fredoka", "Trebuchet MS", system-ui, sans-serif;
+    --font-body: "Nunito", system-ui, -apple-system, "Segoe UI", sans-serif;
+  }
+  * { box-sizing: border-box; }
+  html { min-height: 100%; }
+  body {
+    margin: 0;
+    min-height: 100vh;
+    font-family: var(--font-body);
+    color: var(--ink);
+    background:
+      radial-gradient(900px 500px at 8% -10%, var(--peach), transparent 60%),
+      radial-gradient(800px 500px at 100% 10%, var(--sky), transparent 60%),
+      linear-gradient(160deg, #f3ecff, var(--lilac));
+    background-attachment: fixed;
+    padding: 40px 20px 56px;
+  }
+  .wrap { max-width: 720px; margin: 0 auto; }
+
+  header { display: flex; align-items: center; gap: 14px; margin-bottom: 28px; }
+  .logo {
+    width: 52px; height: 52px; border-radius: 18px;
+    background: linear-gradient(135deg, var(--coral), var(--violet));
+    display: grid; place-items: center;
+    box-shadow: 0 10px 24px rgba(139, 108, 255, 0.35);
+  }
+  h1 { font-family: var(--font-head); font-weight: 600; font-size: 2.1rem; margin: 0; letter-spacing: 0.2px; }
+  .tagline { margin: 2px 0 0; color: var(--ink-soft); font-size: 0.98rem; }
+
+  .banner {
+    border-radius: 16px; padding: 14px 18px; margin-bottom: 20px;
+    font-weight: 700; display: flex; gap: 10px; align-items: center;
+  }
+  .banner.ok { background: var(--mint-bg); color: var(--mint); }
+  .banner.err { background: var(--rose-bg); color: var(--rose); }
+
+  .panel {
+    background: var(--card);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.9);
+    border-radius: 28px;
+    padding: 26px;
+    box-shadow: 0 18px 50px rgba(88, 66, 160, 0.12);
+    margin-bottom: 22px;
+  }
+
+  .drop {
+    display: block; cursor: pointer; text-align: center;
+    border: 2.5px dashed #c4b5ff; border-radius: 22px;
+    padding: 38px 20px;
+    background: linear-gradient(180deg, rgba(255,255,255,0.7), rgba(244,238,255,0.7));
+    transition: border-color .15s, background .15s, transform .15s;
+  }
+  .drop:hover, .drop.over { border-color: var(--violet); background: #fff; }
+  .drop.over { transform: scale(1.01); }
+  .drop input { position: absolute; width: 1px; height: 1px; opacity: 0; }
+  .drop:focus-within { outline: 3px solid var(--violet); outline-offset: 3px; }
+  .drop .big { font-family: var(--font-head); font-size: 1.35rem; margin: 12px 0 4px; }
+  .drop .small { color: var(--ink-soft); margin: 0; }
+  .chosen { margin-top: 14px; font-weight: 700; color: var(--violet); word-break: break-all; min-height: 1.4em; }
+
+  .btn {
+    margin-top: 18px; width: 100%;
+    font-family: var(--font-head); font-size: 1.15rem; font-weight: 500;
+    color: #fff; border: 0; border-radius: 999px; padding: 15px 24px; cursor: pointer;
+    background: linear-gradient(90deg, var(--coral), var(--violet));
+    box-shadow: 0 10px 24px rgba(139, 108, 255, 0.35);
+    transition: transform .15s, box-shadow .15s, opacity .15s;
+  }
+  .btn:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 14px 28px rgba(139, 108, 255, 0.42); }
+  .btn:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
+  .btn:disabled { opacity: 0.45; cursor: not-allowed; box-shadow: none; }
+
+  h2 { font-family: var(--font-head); font-weight: 600; font-size: 1.35rem; margin: 0 0 16px; }
+  .count { color: var(--ink-soft); font-weight: 600; font-family: var(--font-body); font-size: 1rem; margin-left: 6px; }
+
+  .file {
+    display: flex; align-items: center; gap: 14px;
+    background: #fff; border-radius: 18px; padding: 12px 14px; margin-bottom: 10px;
+  }
+  .file:last-child { margin-bottom: 0; }
+  .badge {
+    flex: none; width: 46px; height: 46px; border-radius: 14px;
+    display: grid; place-items: center;
+    font-family: var(--font-head); font-size: 0.8rem; color: #fff; text-transform: lowercase;
+  }
+  .info { flex: 1; min-width: 0; }
+  .name { font-weight: 700; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .meta { color: var(--ink-soft); font-size: 0.88rem; display: flex; gap: 14px; flex-wrap: wrap; }
+  .dl {
+    flex: none; text-decoration: none; font-weight: 700; font-size: 0.92rem;
+    color: var(--violet); background: #f1ecff; padding: 9px 16px; border-radius: 999px;
+    transition: background .15s, color .15s;
+  }
+  .dl:hover { background: var(--violet); color: #fff; }
+  .dl:focus-visible { outline: 3px solid var(--violet); outline-offset: 2px; }
+
+  .empty { text-align: center; padding: 18px 0 6px; color: var(--ink-soft); }
+  .empty svg { opacity: .8; }
+
+  .server {
+    display: flex; align-items: center; justify-content: center; gap: 10px; flex-wrap: wrap;
+    color: var(--ink-soft); font-size: 0.92rem; margin-top: 8px;
+  }
+  .pill { background: rgba(255,255,255,0.8); border-radius: 999px; padding: 7px 14px; font-weight: 600; color: var(--ink); }
+  .dot { display: inline-block; width: 9px; height: 9px; border-radius: 50%; background: #2fcf9b; margin-right: 8px; }
+
+  @media (max-width: 520px) {
+    body { padding: 24px 14px 40px; }
+    h1 { font-size: 1.7rem; }
+    .panel { padding: 18px; border-radius: 22px; }
+    .file { flex-wrap: wrap; }
+    .dl { margin-left: 60px; }
+  }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
 </head>
 <body>
-    <h1>CloudVault File Upload</h1>
-    <p>Upload your files to Amazon S3</p>
+<div class="wrap">
 
-    {% if message %}
-    <p><strong>{{ message }}</strong></p>
-    {% endif %}
+  <header>
+    <div class="logo" aria-hidden="true">
+      <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M7 18a4.5 4.5 0 0 1-.6-8.96A6 6 0 0 1 18 9.5a4 4 0 0 1-.5 8.5H7z"/>
+        <path d="M12 16v-5m0 0-2 2m2-2 2 2"/>
+      </svg>
+    </div>
+    <div>
+      <h1>CloudVault</h1>
+      <p class="tagline">Your files, safe in the cloud.</p>
+    </div>
+  </header>
 
-    <form action="/upload" method="POST" enctype="multipart/form-data">
-        <input type="file" name="file" required>
-        <br><br>
-        <button type="submit">Upload File</button>
+  {% if message %}
+    {% set ok = 'successfully' in message %}
+    <div class="banner {{ 'ok' if ok else 'err' }}" role="status">
+      <span>{{ '✓' if ok else '!' }}</span>
+      <span>{{ message }}</span>
+    </div>
+  {% endif %}
+
+  <section class="panel">
+    <form id="uploadForm" action="/upload" method="POST" enctype="multipart/form-data">
+      <label class="drop" id="drop">
+        <input type="file" name="file" id="file" required>
+        <svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="#8b6cff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M7 18a4.5 4.5 0 0 1-.6-8.96A6 6 0 0 1 18 9.5a4 4 0 0 1-.5 8.5H7z"/>
+          <path d="M12 16v-5m0 0-2 2m2-2 2 2"/>
+        </svg>
+        <p class="big">Drop a file here, or click to browse</p>
+        <p class="small">Up to 16 MB per file</p>
+        <div class="chosen" id="chosen"></div>
+      </label>
+      <button class="btn" id="submitBtn" type="submit" disabled>Upload file</button>
     </form>
+  </section>
 
-    <hr>
-
-    <h3>Your Files</h3>
+  <section class="panel">
+    <h2>Your files <span class="count">{{ files|length }}</span></h2>
     {% if files %}
-    <table border="1" cellpadding="6" cellspacing="0">
-        <tr><th>Name</th><th>Size (KB)</th><th>Uploaded</th><th></th></tr>
-        {% for f in files %}
-        <tr>
-            <td>{{ f.name }}</td>
-            <td>{{ f.size_kb }}</td>
-            <td>{{ f.modified }}</td>
-            <td><a href="/download/{{ f.key }}">Download</a></td>
-        </tr>
-        {% endfor %}
-    </table>
+      {% for f in files %}
+      <div class="file">
+        <div class="badge" data-ext="{{ (f.name.rsplit('.', 1)[-1] if '.' in f.name else 'file')[:4]|lower }}"></div>
+        <div class="info">
+          <div class="name" title="{{ f.name }}">{{ f.name }}</div>
+          <div class="meta"><span>{{ f.size_kb }} KB</span><span>{{ f.modified }} UTC</span></div>
+        </div>
+        <a class="dl" href="/download/{{ f.key }}">Download</a>
+      </div>
+      {% endfor %}
     {% else %}
-    <p>No files uploaded yet.</p>
+      <div class="empty">
+        <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="#c4b5ff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 18a4.5 4.5 0 0 1-.6-8.96A6 6 0 0 1 18 9.5a4 4 0 0 1-.5 8.5H7z"/></svg>
+        <p>Nothing here yet. Upload your first file above.</p>
+      </div>
     {% endif %}
+  </section>
 
-    <hr>
+  <div class="server">
+    <span class="pill"><span class="dot"></span>Served by {{ hostname }}</span>
+  </div>
 
-    <h3>Server Information</h3>
-    <p>Hostname: {{ hostname }}</p>
-    <p>Server Status: Running</p>
+</div>
+
+<script>
+  const input = document.getElementById('file');
+  const drop = document.getElementById('drop');
+  const chosen = document.getElementById('chosen');
+  const btn = document.getElementById('submitBtn');
+  const form = document.getElementById('uploadForm');
+
+  function showChosen() {
+    if (input.files.length) {
+      chosen.textContent = input.files[0].name;
+      btn.disabled = false;
+    } else {
+      chosen.textContent = '';
+      btn.disabled = true;
+    }
+  }
+  input.addEventListener('change', showChosen);
+
+  ['dragenter', 'dragover'].forEach(ev => drop.addEventListener(ev, e => {
+    e.preventDefault(); drop.classList.add('over');
+  }));
+  ['dragleave', 'drop'].forEach(ev => drop.addEventListener(ev, e => {
+    e.preventDefault(); drop.classList.remove('over');
+  }));
+  drop.addEventListener('drop', e => {
+    if (e.dataTransfer.files.length) {
+      input.files = e.dataTransfer.files;
+      showChosen();
+    }
+  });
+
+  form.addEventListener('submit', () => {
+    btn.disabled = true;
+    btn.textContent = 'Uploading…';
+  });
+
+  // Give each file type its own soft color
+  const colors = ['#ff7aa8', '#8b6cff', '#3fb6e8', '#2fcf9b', '#ff9f4a', '#c46bf0'];
+  document.querySelectorAll('.badge').forEach(b => {
+    const ext = b.dataset.ext || 'file';
+    let h = 0;
+    for (const c of ext) h = (h * 31 + c.charCodeAt(0)) % colors.length;
+    b.style.background = colors[h];
+    b.textContent = ext;
+  });
+</script>
 </body>
 </html>
