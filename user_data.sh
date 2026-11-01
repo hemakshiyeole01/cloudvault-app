@@ -1,7 +1,7 @@
 #!/bin/bash
 # EC2 user-data for CloudVault (Amazon Linux 2023)
 # EDIT THESE THREE before use:
-REPO_URL="https://github.com/YOUR-USERNAME/YOUR-REPO.git"
+REPO_URL="https://github.com/hemakshiyeole01/cloudvault-app.git"
 S3_BUCKET="cloudvault-uploads-cc-pro"
 APP_PORT=80   # must match the cloudvault-tg target group port
 
